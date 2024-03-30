@@ -2,12 +2,12 @@ part of 'todo_bloc.dart';
 
 @immutable
 sealed class TodoState {
-  final TodoModel? todo;
-  final List<TodoModel> listOfTodo;
-  final String errorMessage;
-  final Color color;
+   TodoModel? todo;
+   List<TodoModel> listOfTodo;
+   String errorMessage;
+   Color color;
 
-  const TodoState({
+   TodoState({
     required this.errorMessage,
     required this.listOfTodo,
     required this.todo,
@@ -16,7 +16,7 @@ sealed class TodoState {
 }
 
 final class TodoInitial extends TodoState {
-  const TodoInitial({
+   TodoInitial({
     super.errorMessage = "",
     super.listOfTodo = const [],
     super.todo,
@@ -25,16 +25,16 @@ final class TodoInitial extends TodoState {
 }
 
 final class TodoLoaded extends TodoState {
-  const TodoLoaded({
+   TodoLoaded({
     super.errorMessage = "",
     required super.listOfTodo,
-    required super.todo,
-    required super.color,
+    super.todo,
+    super.color= Colors.blue,
   });
 }
 
 final class TodoFailed extends TodoState {
-  const TodoFailed({
+   TodoFailed({
     required super.errorMessage,
     super.listOfTodo = const [],
     super.todo,
@@ -43,7 +43,7 @@ final class TodoFailed extends TodoState {
 }
 
 final class TodoSuccessState extends TodoState {
-  const TodoSuccessState({
+   TodoSuccessState({
     super.errorMessage = "",
     super.listOfTodo = const [],
     super.todo,

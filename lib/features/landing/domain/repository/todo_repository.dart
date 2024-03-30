@@ -8,7 +8,7 @@ abstract class TodoRepo{
 
   Future<Result> getTodos();
 
-  Future<Result> updateTodo(String title, String description);
+  Future<Result> updateTodo(int id, String title, String description, Color color);
 
   Future<Result> deleteTodo(int id);
 

@@ -6,6 +6,8 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
 import 'package:todo/features/landing/view/widget/todo_tile.dart';
 
+import '../widget/add_todo.dart';
+
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
 
@@ -40,82 +42,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text('Add Task'),
-                                      const Divider(),
-                                      TextFormField(
-                                        controller: _titleController,
-                                        decoration: const InputDecoration(
-                                            hintText: 'Title'),
-                                      ),
-                                      TextFormField(
-                                        controller: _descriptionController,
-                                        decoration: const InputDecoration(
-                                            hintText: 'Description'),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      //color picker
-                                      ColorPicker(
-                                        pickerColor: state.color,
-                                        onColorChanged: (value) {
-                                          log('Selected color: $value');
-                                          BlocProvider.of<TodoBloc>(context)
-                                              .add(
-                                            OnColorChangedEvent(value),
-                                          );
-                                        },
-                                        pickerAreaHeightPercent: 0.8,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: 100,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  BlocProvider.of<TodoBloc>(
-                                                          context)
-                                                      .add(
-                                                    OnAddTodoEvent(
-                                                      title:
-                                                          _titleController.text,
-                                                      description:
-                                                          _descriptionController
-                                                              .text,
-                                                      color: state.color,
-                                                    ),
-                                                  );
-                                                },
-                                                child: const Text('Add')),
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  BlocProvider.of<TodoBloc>(
-                                                          context)
-                                                      .add(OnTodoLoadEvent(
-                                                          listOfTodo: []));
-                                                },
-                                                child: const Text('Clear')),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                            return AddTodo(
+                                titleController: _titleController,
+                                descriptionController: _descriptionController);
                           });
                     },
                     icon: const Icon(Icons.add))
@@ -127,10 +56,15 @@ class _LandingScreenState extends State<LandingScreen> {
                 : (state is TodoLoaded)
                     ? ListView.builder(
                         itemCount: state.listOfTodo.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TodoTile(
-                            todo: state.listOfTodo[index],
+                        itemBuilder: (context, index) => RefreshIndicator(
+                          onRefresh: () async => context
+                              .read<TodoBloc>()
+                              .add(OnTodoLoadEvent(listOfTodo: [])),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: TodoTile(
+                              todo: state.listOfTodo[index],
+                            ),
                           ),
                         ),
                       )

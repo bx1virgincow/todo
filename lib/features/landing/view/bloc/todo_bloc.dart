@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:meta/meta.dart';
 import 'package:todo/common/result.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
 import 'package:todo/features/landing/domain/repository/todo_repository.dart';
@@ -14,7 +13,7 @@ part 'todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final TodoRepo _todoRepo = GetIt.I<TodoRepo>();
-  TodoBloc() : super(const TodoInitial()) {
+  TodoBloc() : super(TodoInitial()) {
     on<OnTodoLoadEvent>(_onTodoLoadEvent);
     on<OnAddTodoEvent>(_onAddTodoEvent);
     on<OnColorChangedEvent>(onColorChangedEvent);
@@ -27,8 +26,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       log('TodoResponse: $todoResponse');
 
+      List<TodoModel> todoModel = List.from(todoResponse.value);
+
+      log('Todomodel: $todoModel');
+
       // add(OnTodoLoadEvent(listOfTodo: todoResponse.value ));
-      emit(TodoLoaded(listOfTodo: todoResponse.value, todo: null, color: todoResponse.value['color'],));
+      emit(TodoLoaded(listOfTodo: todoModel));
     } catch (e) {
       Failed(errorMessage: '', value: e.toString());
     }
@@ -43,7 +46,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         event.description,
         event.color,
       );
-      emit(const TodoSuccessState());
+      emit(TodoSuccessState());
     } catch (e) {
       throw Exception(e);
     }
