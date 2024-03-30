@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           child: const SplashScreen(),
         ),
         BlocProvider(
-          create: (context) => TodoBloc()..add(OnTodoLoadEvent(listOfTodo: [])),
+          create: (context) => TodoBloc(),
           child: const LandingScreen(),
         )
       ],

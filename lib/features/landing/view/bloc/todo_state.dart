@@ -15,7 +15,7 @@ sealed class TodoState {
   });
 }
 
-final class TodoInitial extends TodoState {
+ class TodoInitial extends TodoState {
    TodoInitial({
     super.errorMessage = "",
     super.listOfTodo = const [],
@@ -24,7 +24,7 @@ final class TodoInitial extends TodoState {
   });
 }
 
-final class TodoLoaded extends TodoState {
+ class TodoLoaded extends TodoState {
    TodoLoaded({
     super.errorMessage = "",
     required super.listOfTodo,
@@ -33,7 +33,16 @@ final class TodoLoaded extends TodoState {
   });
 }
 
-final class TodoFailed extends TodoState {
+class TodoAdded extends TodoState {
+  TodoAdded({
+    super.errorMessage = "",
+    required super.listOfTodo,
+    super.todo,
+    super.color= Colors.blue,
+  });
+}
+
+ class TodoFailed extends TodoState {
    TodoFailed({
     required super.errorMessage,
     super.listOfTodo = const [],
@@ -42,7 +51,7 @@ final class TodoFailed extends TodoState {
   });
 }
 
-final class TodoSuccessState extends TodoState {
+ class TodoSuccessState extends TodoState {
    TodoSuccessState({
     super.errorMessage = "",
     super.listOfTodo = const [],
@@ -51,7 +60,7 @@ final class TodoSuccessState extends TodoState {
   });
 }
 
-final class ColorPickerState extends TodoState {
+ class ColorPickerState extends TodoState {
   ColorPickerState({
     super.errorMessage="",
     super.listOfTodo=const [],

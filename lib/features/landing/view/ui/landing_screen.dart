@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:todo/common/color.dart';
 import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
 import 'package:todo/features/landing/view/widget/todo_tile.dart';
 
@@ -20,6 +20,16 @@ class _LandingScreenState extends State<LandingScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  //instance of bloc
+  final TodoBloc _todoBloc = TodoBloc();
+
+  //init state
+  @override
+  void initState() {
+    super.initState();
+    _todoBloc.add(OnTodoLoadEvent(listOfTodo: const []));
+  }
+
   //dispose
   @override
   void dispose() {
@@ -31,6 +41,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TodoBloc, TodoState>(
+      bloc: _todoBloc,
       builder: (context, state) {
         return Scaffold(
             appBar: AppBar(
@@ -57,9 +68,8 @@ class _LandingScreenState extends State<LandingScreen> {
                     ? ListView.builder(
                         itemCount: state.listOfTodo.length,
                         itemBuilder: (context, index) => RefreshIndicator(
-                          onRefresh: () async => context
-                              .read<TodoBloc>()
-                              .add(OnTodoLoadEvent(listOfTodo: [])),
+                          onRefresh: () async => context.read<TodoBloc>().add(
+                              OnTodoLoadEvent(listOfTodo: state.listOfTodo)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: TodoTile(
@@ -80,7 +90,10 @@ class _LandingScreenState extends State<LandingScreen> {
           Navigator.pop(context);
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Successfully Added')),
+            const SnackBar(
+              content: Text('Successfully Added'),
+              backgroundColor: AppColor.backgroundColor,
+            ),
           );
         }
       },
