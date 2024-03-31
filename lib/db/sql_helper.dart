@@ -7,10 +7,13 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   //database name
   static const String _databaseName = "todo_db";
+
   //database version
   static const int _databaseVersion = 1;
   //table name
   static const todoTable = "todo";
+  //user table
+  static const userTable = 'user_table';
 
   //constructor for the class
   DatabaseHelper._privateConstructor();
@@ -43,13 +46,23 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       title VARCHAR,
       description TEXT,
-      color INTEGER
+      color INTEGER,
+      category TEXT,
+      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
     ''',
     );
+    await db.execute('''
+    CREATE TABLE $userTable(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    firstname TEXT,
+    lastname TEXT,
+    email TEXT,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+    ''');
   }
 }
 
-
-  // phone VARCHAR(15)
-  //     email VARCHAR(255)
+// phone VARCHAR(15)
+//     email VARCHAR(255)

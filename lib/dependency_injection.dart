@@ -1,5 +1,6 @@
 
 import 'package:get_it/get_it.dart';
+import 'package:todo/features/account/view/bloc/account_bloc.dart';
 import 'package:todo/features/landing/data/local/local_todo_repo_impl.dart';
 import 'package:todo/features/landing/domain/repository/todo_repository.dart';
 import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
@@ -12,6 +13,8 @@ Future<void> initializeDependency() async{
   getIt.registerFactory<TodoBloc>(() => getIt());
 
   getIt.registerFactory<SplashBloc>(() => getIt());
+
+  getIt.registerFactory<AccountBloc>(() => getIt());
 
  GetIt.I.registerSingleton<TodoRepo>(LocalTodoRepoImpl());
 

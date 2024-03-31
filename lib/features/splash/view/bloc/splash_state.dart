@@ -9,4 +9,6 @@ final class SplashLoading extends SplashState {}
 
 final class SplashLoaded extends SplashState {}
 
-final class NavigateToLandingScreenState extends SplashState{}
+final class NavigateToLandingScreenState extends SplashState {}
+
+final class NavigateToRegisterScreenState extends SplashState {}

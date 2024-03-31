@@ -13,6 +13,7 @@ class LocalTodoRepoImpl extends TodoRepo {
     String title,
     String description,
     Color color,
+    String category,
   ) async {
     try {
       Loading(value: 'Loading...');
@@ -22,7 +23,10 @@ class LocalTodoRepoImpl extends TodoRepo {
         'title': title,
         'description': description,
         'color': color.value,
+        'category': category,
       };
+
+      log('data: $data');
 
       var response = await db?.insert(
         DatabaseHelper.todoTable,
@@ -70,7 +74,13 @@ class LocalTodoRepoImpl extends TodoRepo {
   }
 
   @override
-  Future<Result> updateTodo(int id, String title, String description, Color color) async {
+  Future<Result> updateTodo(
+    int id,
+    String title,
+    String description,
+    Color color,
+    String category,
+  ) async {
     try {
       var db = await DatabaseHelper.instance.database;
 
@@ -78,6 +88,7 @@ class LocalTodoRepoImpl extends TodoRepo {
         'title': title,
         'description': description,
         'color': color.value,
+        'category': category,
       };
 
       var response = await db?.update(DatabaseHelper.todoTable, values,

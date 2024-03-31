@@ -17,6 +17,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<OnTodoLoadEvent>(_onTodoLoadEvent);
     on<OnAddTodoEvent>(_onAddTodoEvent);
     on<OnColorChangedEvent>(onColorChangedEvent);
+    on<DropdownEvent>(_dropDownEvent);
   }
 
   FutureOr<void> _onTodoLoadEvent(
@@ -45,6 +46,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         event.title,
         event.description,
         event.color,
+        event.category,
       );
       emit(TodoSuccessState());
     } catch (e) {
@@ -57,5 +59,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     emit(ColorPickerState(color: event.color));
 
     log('Color: ${event.color}');
+  }
+
+  FutureOr<void> _dropDownEvent(DropdownEvent event, Emitter<TodoState> emit) {
+    emit(DropdownState(dropdown: event.selectedValue));
   }
 }

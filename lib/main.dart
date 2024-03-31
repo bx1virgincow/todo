@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/dependency_injection.dart';
+import 'package:todo/features/account/view/ui/register_screen.dart';
 import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
 import 'package:todo/features/landing/view/ui/landing_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 import 'package:todo/features/splash/view/ui/splash_screen.dart';
+
+import 'features/account/data/sources/local/local_repo_impl.dart';
+import 'features/account/view/bloc/account_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +32,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => TodoBloc(),
           child: const LandingScreen(),
-        )
+        ),
+        BlocProvider(
+          create: (context) => AccountBloc(LocalUserRepoImpl()),
+          child: const RegisterScreen(),
+        ),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

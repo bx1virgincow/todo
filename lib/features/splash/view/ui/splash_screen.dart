@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo/features/account/view/ui/register_screen.dart';
 import 'package:todo/features/landing/view/ui/landing_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 
@@ -23,9 +24,19 @@ class SplashScreen extends StatelessWidget {
           listener: (BuildContext context, SplashState state) {
             if (state is NavigateToLandingScreenState) {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const LandingScreen()));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LandingScreen(),
+                ),
+              );
+            }
+            if (state is NavigateToRegisterScreenState) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RegisterScreen(),
+                ),
+              );
             }
           },
         ),

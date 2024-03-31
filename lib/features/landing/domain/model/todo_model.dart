@@ -10,12 +10,14 @@ class TodoModel extends Equatable {
   final String title;
   final String description;
   final Color color;
+  final String category;
 
   const TodoModel({
     required this.id,
     required this.title,
     required this.description,
     required this.color,
+    required this.category,
   });
 
   @override
@@ -24,6 +26,7 @@ class TodoModel extends Equatable {
         title,
         description,
         color,
+        category,
       ];
 
   Map<String, dynamic> toMap() {
@@ -40,7 +43,8 @@ class TodoModel extends Equatable {
       id: map['id'] as int,
       title: map['title'] as String,
       description: map['description'] as String,
-      color: Color(map['color'] as int), // Convert int to Color
+      color: Color(map['color'] as int),
+      category: map['category'] as String, // Convert int to Color
     );
   }
 
@@ -49,7 +53,8 @@ class TodoModel extends Equatable {
       id: json['id'] as int,
       title: json['title'] as String,
       description: json['description'] as String,
-      color: Color(json['color'] as int), // Convert int to Color
+      color: Color(json['color'] as int),
+      category: json['category'] as String, // Convert int to Color
     );
   }
 
