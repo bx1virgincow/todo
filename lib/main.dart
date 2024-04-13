@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/dependency_injection.dart';
 import 'package:todo/features/account/view/ui/register_screen.dart';
-import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
 import 'package:todo/features/landing/view/ui/landing_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 import 'package:todo/features/splash/view/ui/splash_screen.dart';
 
 import 'features/account/data/sources/local/local_repo_impl.dart';
 import 'features/account/view/bloc/account_bloc.dart';
+import 'features/landing/view/bloc/note_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           child: const SplashScreen(),
         ),
         BlocProvider(
-          create: (context) => TodoBloc(),
+          create: (context) => NoteBloc(),
           child: const LandingScreen(),
         ),
         BlocProvider(

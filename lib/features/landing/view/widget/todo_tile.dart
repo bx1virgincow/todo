@@ -5,14 +5,15 @@ import 'package:todo/features/landing/helpers/gradient_creater.dart';
 
 class TodoTile extends StatelessWidget {
   final TodoModel todo;
-  const TodoTile({required this.todo, super.key});
+  final VoidCallback onEdit;
+  const TodoTile({required this.todo, required this.onEdit, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(15),
-      height: 100,
+      height: 120,
       decoration: BoxDecoration(
           color: todo.color,
           borderRadius: BorderRadius.circular(20),
@@ -29,15 +30,17 @@ class TodoTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(todo.title,
-                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.bold)),
               GestureDetector(
-                onTap: () {},
+                onTap: onEdit,
                 child: const Icon(Icons.edit),
               ),
             ],
           ),
           const SizedBox(height: 5),
-          Text(todo.description)
+          Text(todo.description),
+          Text(todo.createdAt),
         ],
       ),
     );

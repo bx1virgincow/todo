@@ -7,13 +7,12 @@ import 'package:todo/db/sql_helper.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
 import 'package:todo/features/landing/domain/repository/todo_repository.dart';
 
-class LocalTodoRepoImpl extends TodoRepo {
+class LocalNoteRepoImpl extends TodoRepo {
   @override
-  Future<Result> addTodo(
+  Future<Result> addNote(
     String title,
     String description,
     Color color,
-    String category,
   ) async {
     try {
       Loading(value: 'Loading...');
@@ -23,13 +22,12 @@ class LocalTodoRepoImpl extends TodoRepo {
         'title': title,
         'description': description,
         'color': color.value,
-        'category': category,
       };
 
       log('data: $data');
 
       var response = await db?.insert(
-        DatabaseHelper.todoTable,
+        DatabaseHelper.noteTable,
         data,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -40,11 +38,11 @@ class LocalTodoRepoImpl extends TodoRepo {
   }
 
   @override
-  Future<Result> deleteTodo(int id) async {
+  Future<Result> deleteNote(int id) async {
     try {
       var db = await DatabaseHelper.instance.database;
       var response = await db
-          ?.delete(DatabaseHelper.todoTable, where: 'id?=', whereArgs: [id]);
+          ?.delete(DatabaseHelper.noteTable, where: 'id=?', whereArgs: [id]);
       return Success(value: response);
     } catch (e) {
       return Failed(errorMessage: 'errorMessage', value: e);
@@ -52,17 +50,17 @@ class LocalTodoRepoImpl extends TodoRepo {
   }
 
   @override
-  Future<Result> getTodo(int id) {
+  Future<Result> getNote(int id) {
     // TODO: implement getTodo
     throw UnimplementedError();
   }
 
   @override
-  Future<Result> getTodos() async {
+  Future<Result> getNotes() async {
     try {
       var db = await DatabaseHelper.instance.database;
 
-      var todoData = await db!.query(DatabaseHelper.todoTable, orderBy: 'id');
+      var todoData = await db!.query(DatabaseHelper.noteTable, orderBy: 'id');
       log('all todo : $todoData');
       var results = todoData.map((e) => TodoModel.fromJson(e)).toList();
       return Success(value: results);
@@ -74,25 +72,24 @@ class LocalTodoRepoImpl extends TodoRepo {
   }
 
   @override
-  Future<Result> updateTodo(
+  Future<Result> updateNote(
     int id,
     String title,
     String description,
     Color color,
-    String category,
   ) async {
     try {
       var db = await DatabaseHelper.instance.database;
 
       Map<String, dynamic> values = {
+        'id': id,
         'title': title,
         'description': description,
         'color': color.value,
-        'category': category,
       };
 
-      var response = await db?.update(DatabaseHelper.todoTable, values,
-          where: 'id?=', whereArgs: [id]);
+      var response = await db?.update(DatabaseHelper.noteTable, values,
+          where: 'id=?', whereArgs: [id]);
 
       return Success(value: response);
     } catch (e) {

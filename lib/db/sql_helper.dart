@@ -11,9 +11,14 @@ class DatabaseHelper {
   //database version
   static const int _databaseVersion = 1;
   //table name
-  static const todoTable = "todo";
+  static const _todoTable = "todo";
+  static get todoTable => _todoTable;
   //user table
-  static const userTable = 'user_table';
+  static const _userTable = 'user_table';
+  static get userTable => _userTable;
+  //notes table
+  static const _noteTable = 'noteTable';
+  static get noteTable => _noteTable;
 
   //constructor for the class
   DatabaseHelper._privateConstructor();
@@ -34,15 +39,18 @@ class DatabaseHelper {
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+    );
   }
 
   //creating a database
   _onCreate(Database db, int version) async {
     await db.execute(
       '''
-    CREATE TABLE $todoTable(
+    CREATE TABLE $_todoTable(
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       title VARCHAR,
       description TEXT,
@@ -52,15 +60,28 @@ class DatabaseHelper {
     )
     ''',
     );
-    await db.execute('''
-    CREATE TABLE $userTable(
+    await db.execute(
+      '''
+    CREATE TABLE $_userTable(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     firstname TEXT,
     lastname TEXT,
     email TEXT,
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
-    ''');
+    ''',
+    );
+    await db.execute(
+      '''
+    CREATE TABLE $_noteTable(
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      title VARCHAR,
+      description TEXT,
+      color INTEGER,
+      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+    ''',
+    );
   }
 }
 

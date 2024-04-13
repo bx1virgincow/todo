@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
+
+import '../bloc/note_bloc.dart';
+
 
 class ColorPickerWidget extends StatelessWidget {
   final ColorPicker colorPicker;
@@ -9,7 +11,7 @@ class ColorPickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<NoteBloc, NoteState>(
       builder: (context, state) {
         if (state is ColorPickerState) {
           return Container(

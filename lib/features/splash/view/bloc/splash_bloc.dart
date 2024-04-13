@@ -20,12 +20,12 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     await Future.delayed(const Duration(milliseconds: 500));
     emit(SplashLoaded());
     await Future.delayed(const Duration(seconds: 1));
-    var response = await getRememberMe();
-    log('splash response: $response');
-    if (response != null) {
-      emit(NavigateToLandingScreenState());
-    } else {
-      emit(NavigateToRegisterScreenState());
-    }
+    // var response = await getRememberMe();
+    // log('splash response: $response');
+    // if (response != null) {
+    emit(NavigateToLandingScreenState());
+    // } else {
+    //   emit(NavigateToRegisterScreenState());
+    // }
   }
 }

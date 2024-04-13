@@ -1,36 +1,34 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo/common/color.dart';
-import 'package:todo/features/landing/view/bloc/todo_bloc.dart';
-import 'package:todo/features/landing/view/widget/todo_tile.dart';
 
+import '../../../../common/color.dart';
+import '../../domain/model/todo_model.dart';
+import '../bloc/note_bloc.dart';
 import '../widget/add_todo.dart';
-import '../widget/status_tile.dart';
+import '../widget/todo_tile.dart';
+import 'edit_screen.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({super.key});
+  const LandingScreen({Key? key});
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
 }
 
 class _LandingScreenState extends State<LandingScreen> {
-  //controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  //instance of bloc
-  final TodoBloc _todoBloc = TodoBloc();
+  final NoteBloc _noteBloc = NoteBloc();
 
-  //init state
   @override
   void initState() {
     super.initState();
-    _todoBloc.add(OnTodoLoadEvent(listOfTodo: const []));
+    _noteBloc.add(OnNoteLoadEvent(listOfTodo: const []));
   }
 
-  //dispose
   @override
   void dispose() {
     super.dispose();
@@ -40,117 +38,108 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TodoBloc, TodoState>(
-      bloc: _todoBloc,
-      builder: (context, state) {
-        return Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AddTodo(
-                        titleController: _titleController,
-                        descriptionController: _descriptionController);
-                  }),
-              child: const Icon(Icons.add),
-            ),
-            //body
-            body: SafeArea(
-              child: (state is TodoInitial)
-                  ? const Center(child: CircularProgressIndicator())
-                  : (state is TodoLoaded)
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              const Row(
-                                children: [
-                                  CircleAvatar(),
-                                  SizedBox(width: 5),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Hi Bruce'),
-                                      Text('Your daily adventure starts now')
-                                    ],
-                                  )
-                                ],
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AddTodo(
+              titleController: _titleController,
+              descriptionController: _descriptionController,
+            );
+          },
+        ),
+        child: const Icon(Icons.add),
+      ),
+      body: SafeArea(
+        child: BlocConsumer<NoteBloc, NoteState>(
+          bloc: _noteBloc,
+          builder: (context, state) {
+            if (state is NoteInitial) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is NoteLoadedState) {
+              return _buildLoadedStateUI(state);
+            } else if (state is NoteFailedState) {
+              return const Text('Failed to fetch data');
+            } else {
+              return const SizedBox();
+            }
+          },
+          listener: (BuildContext context, NoteState state) {
+            if (state is TodoSuccessState) {
+              _titleController.clear();
+              _descriptionController.clear();
+
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Successfully Added'),
+                  backgroundColor: AppColor.backgroundColor,
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadedStateUI(NoteLoadedState state) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const Row(
+            children: [
+              CircleAvatar(),
+              SizedBox(width: 5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Hi Bruce'),
+                  Text('Your daily adventure starts now')
+                ],
+              )
+            ],
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: StreamBuilder<List<TodoModel>>(
+              stream: _noteBloc.noteStream,
+              builder: (context, snapshot) {
+                log('snapshot data: ${snapshot.data}');
+                log('noteStream: ${_noteBloc.noteStream}');
+                log('notes: ${state.listOfTodo}');
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: Text(
+                      'No To Do Available\nClick on the "+" to add a new todo',
+                    ),
+                  );
+                }
+                return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return TodoTile(
+                        onEdit: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditScreen(
+                                todoModel: snapshot.data![index],
                               ),
-                              const SizedBox(height: 20),
-                              //status
-                              Flexible(
-                                  child: GridView.builder(
-                                shrinkWrap: true,
-                                itemCount: 4,
-                                itemBuilder: (context, index) {
-                                  return StatusTile(
-                                    todoModel: state.todo,
-                                  );
-                                },
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisExtent: 80,
-                                  mainAxisSpacing: 10,
-                                ),
-                              )),
-
-                              //todo
-                              const SizedBox(height: 10),
-                              (state.listOfTodo.isEmpty)
-                                  ? const Flexible(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                              'No To Do Available\nClick on the "+" to add a new todo')
-                                        ],
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: ListView.builder(
-                                        itemCount: state.listOfTodo.length,
-                                        itemBuilder: (context, index) =>
-                                            RefreshIndicator(
-                                          onRefresh: () async => context
-                                              .read<TodoBloc>()
-                                              .add(OnTodoLoadEvent(
-                                                  listOfTodo:
-                                                      state.listOfTodo)),
-                                          child: TodoTile(
-                                            todo: state.listOfTodo[index],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        )
-                      : (state is TodoFailed)
-                          ? const Text('Failed to fetch data')
-                          : const SizedBox(),
-            ));
-      },
-      listener: (BuildContext context, TodoState state) {
-        if (state is TodoSuccessState) {
-          _titleController.clear();
-          _descriptionController.clear();
-
-          Navigator.pop(context);
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Successfully Added'),
-              backgroundColor: AppColor.backgroundColor,
+                            ),
+                          );
+                        },
+                        todo: snapshot.data![index],
+                      );
+                    });
+              },
             ),
-          );
-        }
-      },
+          ),
+        ],
+      ),
     );
   }
 }

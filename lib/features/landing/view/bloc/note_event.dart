@@ -1,23 +1,39 @@
-part of 'todo_bloc.dart';
+part of 'note_bloc.dart';
 
 @immutable
 sealed class TodoEvent {}
 
-final class OnTodoLoadEvent extends TodoEvent {
+final class OnNoteLoadEvent extends TodoEvent {
   final List<TodoModel> listOfTodo;
 
-  OnTodoLoadEvent({
+  OnNoteLoadEvent({
     required this.listOfTodo,
   });
 }
 
-final class OnAddTodoEvent extends TodoEvent {
+final class OnAddNoteEvent extends TodoEvent {
   final String title;
   final String description;
   final Color color;
   final String category;
 
-  OnAddTodoEvent({
+  OnAddNoteEvent({
+    required this.title,
+    required this.description,
+    required this.color,
+    required this.category,
+  });
+}
+
+final class OnUpdateNoteEvent extends TodoEvent {
+  final int id;
+  final String title;
+  final String description;
+  final Color color;
+  final String category;
+
+  OnUpdateNoteEvent({
+    required this.id,
     required this.title,
     required this.description,
     required this.color,

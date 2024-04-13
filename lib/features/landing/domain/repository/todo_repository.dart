@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:todo/common/result.dart';
 
 abstract class TodoRepo {
-  Future<Result> getTodo(int id);
+  Future<Result> getNote(int id);
 
-  Future<Result> getTodos();
+  Future<Result> getNotes();
 
-  Future<Result> updateTodo(
+  Future<Result> updateNote(
     int id,
     String title,
     String description,
     Color color,
-    String category,
   );
 
-  Future<Result> deleteTodo(int id);
+  Future<Result> deleteNote(int id);
 
-  Future<Result> addTodo(
+  Future<Result> addNote(
     String title,
     String description,
     Color color,
-    String category,
   );
 }
