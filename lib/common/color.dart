@@ -9,4 +9,5 @@ class AppColor {
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Colors.black;
   static const Color borderColor = Color(0xff1c3447);
+  static const Color tabForegroundColor = Color(0xff2F3F55);
 }

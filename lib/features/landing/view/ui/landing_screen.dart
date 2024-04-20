@@ -1,8 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
-import 'package:todo/features/landing/view/widget/todo_tile.dart';
+import 'package:todo/features/landing/view/widget/note_container.dart';
 
 import '../../../../common/color.dart';
 import '../bloc/note_bloc.dart';
@@ -52,7 +51,7 @@ class _LandingScreenState extends State<LandingScreen>
             child: Column(
               children: [
                 //user information and notification row
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
@@ -81,7 +80,7 @@ class _LandingScreenState extends State<LandingScreen>
                     CircleAvatar()
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 //search field
                 TextFormField(
                   decoration: InputDecoration(
@@ -91,48 +90,55 @@ class _LandingScreenState extends State<LandingScreen>
                     ),
                     fillColor: AppColor.textFieldBgColor,
                     filled: true,
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.search,
                       color: AppColor.textFieldTextColor,
                     ),
                     hintText: 'Search by keyword',
-                    hintStyle: TextStyle(color: AppColor.textFieldTextColor),
-                    suffix: Icon(
+                    hintStyle: const TextStyle(color: AppColor.textFieldTextColor),
+                    suffixIcon: const Icon(
                       Icons.filter_list,
                       color: AppColor.textFieldTextColor,
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 //switch container
                 Container(
                   height: 45,
+                  decoration: const BoxDecoration(
+                    color: AppColor.whiteColor,
+                  ),
                   child: TabBar(
                     controller: _tabController,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: Colors.black,
-                    tabs: [
+                    indicator:  BoxDecoration(
+                      color: AppColor.tabForegroundColor,
+                      borderRadius: BorderRadius.circular(15)
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: AppColor.whiteColor,
+                    unselectedLabelColor: AppColor.onBoardDescriptionColor,
+                    tabs: const [
                       Tab(
-                        child: Text('Tab 1'),
+                        text: 'Notes',
                       ),
                       Tab(
-                        child: Text('Tab 2'),
+                        text: 'My Todo\'s',
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
 
                 //tab bar view here
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children: [
+                    children: const [
+                     NoteWidget(),
                       Center(
-                        child: Text('Tab 1 View'),
-                      ),
-                      Center(
-                        child: Text('Tab 2 View'),
+                        child: Text('Coming soon...'),
                       )
                     ],
                   ),
@@ -143,42 +149,3 @@ class _LandingScreenState extends State<LandingScreen>
         ));
   }
 }
-
-// SafeArea(
-// child: BlocConsumer<NoteBloc, NoteState>(
-// bloc: _noteBloc,
-// builder: (context, state) {
-// if (state is NoteInitial) {
-// return const Center(child: CircularProgressIndicator());
-// } else if (state is NoteLoadedState) {
-// return StaggeredGridView.countBuilder(
-// crossAxisCount: 4,
-// itemCount: state.noteList.length,
-// itemBuilder: (BuildContext context, int index) => NoteTile(
-// todo: state.noteList[index],
-// onDelete: () {
-// _noteBloc
-//     .add(OnDeleteNoteEvent(state.noteList[index].id));
-// }),
-// staggeredTileBuilder: (int index) =>
-// StaggeredTile.count(2, index.isEven ? 2 : 1),
-// mainAxisSpacing: 4.0,
-// crossAxisSpacing: 4.0,
-// );
-// } else if (state is NoteFailedState) {
-// return const Text('Failed to fetch data');
-// } else {
-// return const SizedBox();
-// }
-// },
-// listener: (BuildContext context, NoteState state) {
-// if (state is NoteDeletedState) {
-// ScaffoldMessenger.of(context).showSnackBar(
-// const SnackBar(
-// content: Text('Deleted Successfully!'),
-// backgroundColor: AppColor.backgroundColor),
-// );
-// }
-// },
-// ),
-// ),
