@@ -5,14 +5,14 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class TodoModel extends Equatable {
+class NoteModel extends Equatable {
   final int id;
   final String title;
   final String description;
   final Color color;
   final String createdAt;
 
-  const TodoModel({
+  const NoteModel({
     required this.id,
     required this.title,
     required this.description,
@@ -39,8 +39,8 @@ class TodoModel extends Equatable {
     };
   }
 
-  factory TodoModel.fromMap(Map<String, dynamic> map) {
-    return TodoModel(
+  factory NoteModel.fromMap(Map<String, dynamic> map) {
+    return NoteModel(
       id: map['id'] as int,
       title: map['title'] as String,
       description: map['description'] as String,
@@ -49,8 +49,8 @@ class TodoModel extends Equatable {
     );
   }
 
-  factory TodoModel.fromJson(Map<String, dynamic> json) {
-    return TodoModel(
+  factory NoteModel.fromJson(Map<String, dynamic> json) {
+    return NoteModel(
       id: json['id'] as int,
       title: json['title'] as String,
       description: json['description'] as String,

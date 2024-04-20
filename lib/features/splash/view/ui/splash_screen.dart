@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo/features/landing/view/ui/landing_screen.dart';
+import 'package:todo/features/onboarding/view/ui/on_board_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -13,9 +14,9 @@ class SplashScreen extends StatelessWidget {
         child: BlocConsumer<SplashBloc, SplashState>(
           builder: (context, state) {
             if (state is SplashLoading) {
-              return const Text('Initializing..');
+              return SvgPicture.asset('assets/splash_assets/note_logo_svg.svg');
             } else if (state is SplashLoaded) {
-              return const Text('Loading...');
+              return SvgPicture.asset('assets/splash_assets/note_logo_svg.svg');
             } else {
               return const SizedBox();
             }
@@ -25,7 +26,7 @@ class SplashScreen extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LandingScreen(),
+                  builder: (context) => const OnBoardingScreen(),
                 ),
               );
             }

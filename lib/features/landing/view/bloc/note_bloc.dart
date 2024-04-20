@@ -3,51 +3,40 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:todo/common/result.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
-import 'package:todo/features/landing/domain/repository/todo_repository.dart';
+import 'package:todo/features/landing/domain/repository/note_repository.dart';
 
 part 'note_event.dart';
 part 'note_state.dart';
 
-class NoteBloc extends Bloc<TodoEvent, NoteState> {
-  final TodoRepo _todoRepo = GetIt.I<TodoRepo>();
-  final _noteStreamController = StreamController<List<TodoModel>>();
+class NoteBloc extends Bloc<NoteEvent, NoteState> {
+  final NoteRepo _todoRepo;
 
-  NoteBloc() : super(NoteInitial()) {
+  NoteBloc(this._todoRepo) : super(const NoteInitial()) {
     on<OnNoteLoadEvent>(_onNoteLoadEvent);
     on<OnAddNoteEvent>(_onAddNoteEvent);
     on<OnColorChangedEvent>(onColorChangedEvent);
     on<DropdownEvent>(_dropDownEvent);
     on<OnUpdateNoteEvent>(_onUpdateNoteEvent);
-  }
-
-  Stream<List<TodoModel>> get noteStream => _noteStreamController.stream;
-
-  void dispose() {
-    _noteStreamController.close();
-    super.close();
+    on<OnDeleteNoteEvent>(_onDeleteNoteEvent);
   }
 
   FutureOr<void> _onNoteLoadEvent(
       OnNoteLoadEvent event, Emitter<NoteState> emit) async {
     try {
-      var todoResponse = await _todoRepo.getNotes();
+      var todoResponse = _todoRepo.getNotes();
 
-      if (todoResponse is Success) {
-        log('TodoResponse: ${todoResponse.value}');
+      await for (var response in todoResponse) {
+        if (response is Success) {
+          log('TodoResponse: $response');
 
-        List<TodoModel> todoModel = List.from(todoResponse.value);
-
-        log('Todomodel: $todoModel');
-        _noteStreamController.sink.add(todoModel); // Update the stream
-
-        // add(OnTodoLoadEvent(listOfTodo: todoResponse.value ));
-        emit(NoteLoadedState(listOfTodo: todoModel));
-      } else if (todoResponse is Failed) {
-        log('TodoResponse: $todoResponse:: response: ${todoResponse.value}');
-        emit(NoteFailedState(errorMessage: todoResponse.value));
+          List<NoteModel> todoModel = List.from(response.value);
+          emit(NoteLoadedState(noteList: todoModel));
+        } else if (response is Failed) {
+          log('response: $response');
+          emit(NoteFailedState(errorMessage: response.value));
+        }
       }
     } catch (e) {
       log('Error message: $e');
@@ -65,9 +54,9 @@ class NoteBloc extends Bloc<TodoEvent, NoteState> {
         event.color,
       );
       if (response is Success) {
-        emit(TodoSuccessState());
+        emit(const TodoSuccessState());
       } else if (response is Failed) {
-        emit(NoteFailedState(errorMessage: 'errorMessage'));
+        emit(const NoteFailedState(errorMessage: 'errorMessage'));
       }
     } catch (e) {
       throw Exception(e);
@@ -85,18 +74,35 @@ class NoteBloc extends Bloc<TodoEvent, NoteState> {
     emit(DropdownState(dropdown: event.selectedValue));
   }
 
-  FutureOr<void> _onUpdateNoteEvent(OnUpdateNoteEvent event, Emitter<NoteState> emit) async{
-    try{
-      final response = await _todoRepo.updateNote(event.id, event.title, event.description, event.color);
-      if(response is Success){
+  FutureOr<void> _onUpdateNoteEvent(
+      OnUpdateNoteEvent event, Emitter<NoteState> emit) async {
+    try {
+      final response = _todoRepo.updateNote(
+          event.id, event.title, event.description, event.color);
+      if (response is Success) {
         log('success update');
-      }else if(response is Failed){
+      } else if (response is Failed) {
         log('failed updating');
       }
-    }
-    catch(e){
+    } catch (e) {
       log('Update failed: $e');
       throw Exception(e);
+    }
+  }
+
+  FutureOr<void> _onDeleteNoteEvent(
+      OnDeleteNoteEvent event, Emitter<NoteState> emit) async {
+    try {
+      log('loading..please wait');
+      final response = await _todoRepo.deleteNote(event.noteId);
+      if (response is Success) {
+        emit(const DeleteSuccessState());
+      } else if (response is Failed) {
+        emit(const DeleteFailedState(errorMessage: 'Failed to delete'));
+      }
+    } catch (e) {
+      log('Deletion failed');
+      emit(const DeleteFailedState(errorMessage: 'Failed to delete'));
     }
   }
 }

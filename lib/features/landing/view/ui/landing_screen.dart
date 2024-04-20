@@ -1,53 +1,36 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
+import 'package:todo/features/landing/view/widget/todo_tile.dart';
 
 import '../../../../common/color.dart';
-import '../../domain/model/todo_model.dart';
 import '../bloc/note_bloc.dart';
-import '../widget/add_todo.dart';
-import '../widget/todo_tile.dart';
-import 'edit_screen.dart';
+import 'add_todo_screen.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key});
+  const LandingScreen({super.key});
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
 }
 
 class _LandingScreenState extends State<LandingScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
-  final NoteBloc _noteBloc = NoteBloc();
+  final NoteBloc _noteBloc = NoteBloc(LocalNoteRepoImpl());
 
   @override
   void initState() {
     super.initState();
-    _noteBloc.add(OnNoteLoadEvent(listOfTodo: const []));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _titleController.dispose();
-    _descriptionController.dispose();
+    _noteBloc.add(OnNoteLoadEvent(noteList: const []));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AddTodo(
-              titleController: _titleController,
-              descriptionController: _descriptionController,
-            );
-          },
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddTodo()),
         ),
         child: const Icon(Icons.add),
       ),
@@ -58,7 +41,20 @@ class _LandingScreenState extends State<LandingScreen> {
             if (state is NoteInitial) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is NoteLoadedState) {
-              return _buildLoadedStateUI(state);
+              return StaggeredGridView.countBuilder(
+                crossAxisCount: 4,
+                itemCount: state.noteList.length,
+                itemBuilder: (BuildContext context, int index) => NoteTile(
+                    todo: state.noteList[index],
+                    onDelete: () {
+                      _noteBloc
+                          .add(OnDeleteNoteEvent(state.noteList[index].id));
+                    }),
+                staggeredTileBuilder: (int index) =>
+                    StaggeredTile.count(2, index.isEven ? 2 : 1),
+                mainAxisSpacing: 4.0,
+                crossAxisSpacing: 4.0,
+              );
             } else if (state is NoteFailedState) {
               return const Text('Failed to fetch data');
             } else {
@@ -66,79 +62,15 @@ class _LandingScreenState extends State<LandingScreen> {
             }
           },
           listener: (BuildContext context, NoteState state) {
-            if (state is TodoSuccessState) {
-              _titleController.clear();
-              _descriptionController.clear();
-
-              Navigator.pop(context);
-
+            if (state is NoteDeletedState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Successfully Added'),
-                  backgroundColor: AppColor.backgroundColor,
-                ),
+                    content: Text('Deleted Successfully!'),
+                    backgroundColor: AppColor.backgroundColor),
               );
             }
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildLoadedStateUI(NoteLoadedState state) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          const Row(
-            children: [
-              CircleAvatar(),
-              SizedBox(width: 5),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hi Bruce'),
-                  Text('Your daily adventure starts now')
-                ],
-              )
-            ],
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: StreamBuilder<List<TodoModel>>(
-              stream: _noteBloc.noteStream,
-              builder: (context, snapshot) {
-                log('snapshot data: ${snapshot.data}');
-                log('noteStream: ${_noteBloc.noteStream}');
-                log('notes: ${state.listOfTodo}');
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Text(
-                      'No To Do Available\nClick on the "+" to add a new todo',
-                    ),
-                  );
-                }
-                return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return TodoTile(
-                        onEdit: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditScreen(
-                                todoModel: snapshot.data![index],
-                              ),
-                            ),
-                          );
-                        },
-                        todo: snapshot.data![index],
-                      );
-                    });
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

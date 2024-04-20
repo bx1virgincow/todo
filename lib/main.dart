@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/dependency_injection.dart';
 import 'package:todo/features/account/view/ui/register_screen.dart';
+import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
 import 'package:todo/features/landing/view/ui/landing_screen.dart';
+import 'package:todo/features/onboarding/view/bloc/on_board_bloc.dart';
+import 'package:todo/features/onboarding/view/ui/on_board_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 import 'package:todo/features/splash/view/ui/splash_screen.dart';
 
@@ -30,7 +33,11 @@ class MyApp extends StatelessWidget {
           child: const SplashScreen(),
         ),
         BlocProvider(
-          create: (context) => NoteBloc(),
+          create: (context) => OnBoardBloc(),
+          child: const OnBoardingScreen(),
+        ),
+        BlocProvider(
+          create: (context) => NoteBloc(LocalNoteRepoImpl()),
           child: const LandingScreen(),
         ),
         BlocProvider(

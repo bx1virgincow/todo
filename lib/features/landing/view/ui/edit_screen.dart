@@ -6,7 +6,7 @@ import 'package:todo/features/landing/domain/model/todo_model.dart';
 import '../bloc/note_bloc.dart';
 
 class EditScreen extends StatefulWidget {
-  final TodoModel todoModel;
+  final NoteModel todoModel;
   const EditScreen({super.key, required this.todoModel});
 
   @override

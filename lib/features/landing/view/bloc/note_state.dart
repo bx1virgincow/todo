@@ -2,15 +2,15 @@ part of 'note_bloc.dart';
 
 @immutable
 sealed class NoteState {
-  TodoModel? todo;
-  List<TodoModel> listOfTodo;
-  String errorMessage;
-  Color color;
-  String dropdown;
+  final NoteModel? todo;
+  final List<NoteModel> noteList;
+  final String errorMessage;
+  final Color color;
+  final String dropdown;
 
-  NoteState({
+  const NoteState({
     required this.errorMessage,
-    required this.listOfTodo,
+    required this.noteList,
     required this.todo,
     required this.color,
     required this.dropdown,
@@ -18,9 +18,9 @@ sealed class NoteState {
 }
 
 class NoteInitial extends NoteState {
-  NoteInitial({
+  const NoteInitial({
     super.errorMessage = "",
-    super.listOfTodo = const [],
+    super.noteList = const [],
     super.todo,
     super.color = Colors.blue,
     super.dropdown = '',
@@ -28,56 +28,86 @@ class NoteInitial extends NoteState {
 }
 
 class NoteLoadedState extends NoteState {
-  NoteLoadedState(
+  const NoteLoadedState(
       {super.errorMessage = "",
-      required super.listOfTodo,
+      required super.noteList,
       super.todo,
       super.color = Colors.blue,
       super.dropdown = ''});
 }
 
 class NoteAddedState extends NoteState {
-  NoteAddedState(
+  const NoteAddedState(
       {super.errorMessage = "",
-      required super.listOfTodo,
+      required super.noteList,
       super.todo,
       super.color = Colors.blue,
       super.dropdown = ''});
 }
 
 class NoteFailedState extends NoteState {
-  NoteFailedState(
+  const NoteFailedState(
       {required super.errorMessage,
-      super.listOfTodo = const [],
+      super.noteList = const [],
       super.todo,
       super.color = Colors.blue,
       super.dropdown = ''});
 }
 
 class TodoSuccessState extends NoteState {
-  TodoSuccessState(
+  const TodoSuccessState(
       {super.errorMessage = "",
-      super.listOfTodo = const [],
+      super.noteList = const [],
       super.todo,
       super.color = Colors.blue,
       super.dropdown = ''});
 }
 
 class ColorPickerState extends NoteState {
-  ColorPickerState(
+  const ColorPickerState(
       {super.errorMessage = "",
-      super.listOfTodo = const [],
+      super.noteList = const [],
       super.todo,
       required super.color,
       super.dropdown = ''});
 }
 
 class DropdownState extends NoteState {
-  DropdownState({
+  const DropdownState({
     super.errorMessage = '',
-    super.listOfTodo = const [],
+    super.noteList = const [],
     super.todo,
     super.color = Colors.blue,
     required super.dropdown,
+  });
+}
+
+class NoteDeletedState extends NoteState {
+  const NoteDeletedState({
+    super.errorMessage = '',
+    super.noteList = const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+  });
+}
+
+class DeleteSuccessState extends NoteState{
+  const DeleteSuccessState({
+    super.errorMessage='',
+    super.noteList = const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+});
+}
+
+class DeleteFailedState extends NoteState {
+  const DeleteFailedState({
+    required super.errorMessage,
+    super.noteList = const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
   });
 }

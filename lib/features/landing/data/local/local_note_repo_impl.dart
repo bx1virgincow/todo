@@ -5,9 +5,9 @@ import 'package:sqflite/sqflite.dart';
 import 'package:todo/common/result.dart';
 import 'package:todo/db/sql_helper.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
-import 'package:todo/features/landing/domain/repository/todo_repository.dart';
+import 'package:todo/features/landing/domain/repository/note_repository.dart';
 
-class LocalNoteRepoImpl extends TodoRepo {
+class LocalNoteRepoImpl extends NoteRepo {
   @override
   Future<Result> addNote(
     String title,
@@ -17,14 +17,11 @@ class LocalNoteRepoImpl extends TodoRepo {
     try {
       Loading(value: 'Loading...');
       var db = await DatabaseHelper.instance.database;
-      log('Color: $color');
       Map<String, dynamic> data = {
         'title': title,
         'description': description,
         'color': color.value,
       };
-
-      log('data: $data');
 
       var response = await db?.insert(
         DatabaseHelper.noteTable,
@@ -50,22 +47,22 @@ class LocalNoteRepoImpl extends TodoRepo {
   }
 
   @override
-  Future<Result> getNote(int id) {
+  Stream<Result> getNote(int id) {
     // TODO: implement getTodo
     throw UnimplementedError();
   }
 
   @override
-  Future<Result> getNotes() async {
+  Stream<Result> getNotes() async* {
     try {
       var db = await DatabaseHelper.instance.database;
 
       var todoData = await db!.query(DatabaseHelper.noteTable, orderBy: 'id');
       log('all todo : $todoData');
-      var results = todoData.map((e) => TodoModel.fromJson(e)).toList();
-      return Success(value: results);
+      var results = todoData.map((e) => NoteModel.fromJson(e)).toList();
+      yield Success(value: results);
     } catch (e) {
-      return Failed(
+      yield Failed(
           errorMessage: 'Error fetching data from the backend $e',
           value: 'Error ${e.toString()}');
     }
@@ -93,7 +90,7 @@ class LocalNoteRepoImpl extends TodoRepo {
 
       return Success(value: response);
     } catch (e) {
-      return Failed(errorMessage: 'failed to update ${e.toString()}', value: e);
+      return  Failed(errorMessage: 'failed to update ${e.toString()}', value: e);
     }
   }
 }

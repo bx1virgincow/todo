@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:todo/common/result.dart';
 
-abstract class TodoRepo {
-  Future<Result> getNote(int id);
+abstract class NoteRepo {
+  Stream<Result> getNote(int id);
 
-  Future<Result> getNotes();
+  Stream<Result> getNotes();
 
   Future<Result> updateNote(
     int id,

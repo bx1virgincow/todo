@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
 
 class StatusTile extends StatelessWidget {
-  final TodoModel? todoModel;
+  final NoteModel? todoModel;
   const StatusTile({
     super.key,
     required this.todoModel,
