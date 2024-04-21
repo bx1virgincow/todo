@@ -7,6 +7,7 @@ sealed class NoteState {
   final String errorMessage;
   final Color color;
   final String dropdown;
+  final String searchValue;
 
   const NoteState({
     required this.errorMessage,
@@ -14,6 +15,7 @@ sealed class NoteState {
     required this.todo,
     required this.color,
     required this.dropdown,
+    required this.searchValue,
   });
 }
 
@@ -24,52 +26,63 @@ class NoteInitial extends NoteState {
     super.todo,
     super.color = Colors.blue,
     super.dropdown = '',
+    super.searchValue = '',
   });
 }
 
 class NoteLoadedState extends NoteState {
-  const NoteLoadedState(
-      {super.errorMessage = "",
-      required super.noteList,
-      super.todo,
-      super.color = Colors.blue,
-      super.dropdown = ''});
+  const NoteLoadedState({
+    super.errorMessage = "",
+    required super.noteList,
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+    super.searchValue = '',
+  });
 }
 
 class NoteAddedState extends NoteState {
-  const NoteAddedState(
-      {super.errorMessage = "",
-      required super.noteList,
-      super.todo,
-      super.color = Colors.blue,
-      super.dropdown = ''});
+  const NoteAddedState({
+    super.errorMessage = "",
+    required super.noteList,
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+    super.searchValue = '',
+  });
 }
 
 class NoteFailedState extends NoteState {
-  const NoteFailedState(
-      {required super.errorMessage,
-      super.noteList = const [],
-      super.todo,
-      super.color = Colors.blue,
-      super.dropdown = ''});
+  const NoteFailedState({
+    required super.errorMessage,
+    super.noteList = const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+    super.searchValue = '',
+  });
 }
 
 class TodoSuccessState extends NoteState {
-  const TodoSuccessState(
-      {super.errorMessage = "",
-      super.noteList = const [],
-      super.todo,
-      super.color = Colors.blue,
-      super.dropdown = ''});
+  const TodoSuccessState({
+    super.errorMessage = "",
+    super.noteList = const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+    super.searchValue = '',
+  });
 }
 
 class ColorPickerState extends NoteState {
-  const ColorPickerState(
-      {super.errorMessage = "",
-      super.noteList = const [],
-      super.todo,
-      required super.color,
-      super.dropdown = ''});
+  const ColorPickerState({
+    super.errorMessage = "",
+    super.noteList = const [],
+    super.todo,
+    required super.color,
+    super.dropdown = '',
+    super.searchValue = '',
+  });
 }
 
 class DropdownState extends NoteState {
@@ -79,6 +92,7 @@ class DropdownState extends NoteState {
     super.todo,
     super.color = Colors.blue,
     required super.dropdown,
+    super.searchValue = '',
   });
 }
 
@@ -89,17 +103,19 @@ class NoteDeletedState extends NoteState {
     super.todo,
     super.color = Colors.blue,
     super.dropdown = '',
+    super.searchValue = '',
   });
 }
 
-class DeleteSuccessState extends NoteState{
+class DeleteSuccessState extends NoteState {
   const DeleteSuccessState({
-    super.errorMessage='',
+    super.errorMessage = '',
     super.noteList = const [],
     super.todo,
     super.color = Colors.blue,
     super.dropdown = '',
-});
+    super.searchValue = '',
+  });
 }
 
 class DeleteFailedState extends NoteState {
@@ -109,5 +125,17 @@ class DeleteFailedState extends NoteState {
     super.todo,
     super.color = Colors.blue,
     super.dropdown = '',
+    super.searchValue = '',
+  });
+}
+
+class SearchNoteState extends NoteState {
+  SearchNoteState({
+    super.errorMessage = '',
+    required super.noteList,
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown = '',
+    required super.searchValue,
   });
 }

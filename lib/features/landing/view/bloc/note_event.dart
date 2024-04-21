@@ -11,7 +11,7 @@ final class OnNoteLoadEvent extends NoteEvent {
   });
 }
 
-final class OnDeleteNoteEvent extends NoteEvent{
+final class OnDeleteNoteEvent extends NoteEvent {
   final int noteId;
   OnDeleteNoteEvent(this.noteId);
 }
@@ -44,6 +44,17 @@ final class OnUpdateNoteEvent extends NoteEvent {
     required this.color,
     required this.category,
   });
+}
+
+final class SearchNoteEvent extends NoteEvent {
+  final String searchValue;
+
+  SearchNoteEvent({required this.searchValue});
+}
+
+final class FilterNoteEvent extends NoteEvent {
+  final Color color;
+  FilterNoteEvent({required this.color});
 }
 
 final class OnColorChangedEvent extends NoteEvent {

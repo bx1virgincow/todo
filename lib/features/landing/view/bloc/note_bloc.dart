@@ -20,6 +20,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     on<DropdownEvent>(_dropDownEvent);
     on<OnUpdateNoteEvent>(_onUpdateNoteEvent);
     on<OnDeleteNoteEvent>(_onDeleteNoteEvent);
+    on<SearchNoteEvent>(_searchNoteEvent);
   }
 
   FutureOr<void> _onNoteLoadEvent(
@@ -104,5 +105,22 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       log('Deletion failed');
       emit(const DeleteFailedState(errorMessage: 'Failed to delete'));
     }
+  }
+
+  FutureOr<void> _searchNoteEvent(
+      SearchNoteEvent event, Emitter<NoteState> emit) {
+    try{
+      List<NoteModel> noteList = state.noteList.where((searchValue) {
+        return searchValue.title
+            .toLowerCase()
+            .contains(event.searchValue.toLowerCase());
+      }).toList();
+
+      log('value: ${event.searchValue}');
+      emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
+    }catch(e){
+      log('Error while searching: $e');
+    }
+
   }
 }

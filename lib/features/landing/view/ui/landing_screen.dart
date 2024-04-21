@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
 import 'package:todo/features/landing/view/widget/note_container.dart';
 
@@ -82,25 +82,36 @@ class _LandingScreenState extends State<LandingScreen>
                 ),
                 const SizedBox(height: 10),
                 //search field
-                TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    fillColor: AppColor.textFieldBgColor,
-                    filled: true,
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: AppColor.textFieldTextColor,
-                    ),
-                    hintText: 'Search by keyword',
-                    hintStyle: const TextStyle(color: AppColor.textFieldTextColor),
-                    suffixIcon: const Icon(
-                      Icons.filter_list,
-                      color: AppColor.textFieldTextColor,
-                    ),
-                  ),
+                BlocBuilder<NoteBloc, NoteState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      onChanged: (value) {
+                        context
+                            .read<NoteBloc>()
+                            .add(SearchNoteEvent(searchValue: value));
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        fillColor: AppColor.textFieldBgColor,
+                        filled: true,
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppColor.textFieldTextColor,
+                        ),
+                        hintText: 'Search by keyword',
+                        hintStyle:
+                            const TextStyle(color: AppColor.textFieldTextColor),
+                        suffixIcon: const Icon(
+                          Icons.filter_list,
+                          color: AppColor.textFieldTextColor,
+                        ),
+                      ),
+                    );
+
+                  },
                 ),
                 const SizedBox(height: 10),
 
@@ -112,10 +123,9 @@ class _LandingScreenState extends State<LandingScreen>
                   ),
                   child: TabBar(
                     controller: _tabController,
-                    indicator:  BoxDecoration(
-                      color: AppColor.tabForegroundColor,
-                      borderRadius: BorderRadius.circular(15)
-                    ),
+                    indicator: BoxDecoration(
+                        color: AppColor.tabForegroundColor,
+                        borderRadius: BorderRadius.circular(15)),
                     indicatorSize: TabBarIndicatorSize.tab,
                     labelColor: AppColor.whiteColor,
                     unselectedLabelColor: AppColor.onBoardDescriptionColor,
@@ -136,7 +146,7 @@ class _LandingScreenState extends State<LandingScreen>
                   child: TabBarView(
                     controller: _tabController,
                     children: const [
-                     NoteWidget(),
+                      NoteWidget(),
                       Center(
                         child: Text('Coming soon...'),
                       )
