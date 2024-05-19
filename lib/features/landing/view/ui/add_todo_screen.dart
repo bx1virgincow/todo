@@ -21,6 +21,13 @@ class _AddTodoState extends State<AddTodo> {
   final TextEditingController _descriptionController = TextEditingController();
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<NoteBloc, NoteState>(
       builder: (context, state) => Scaffold(
@@ -67,20 +74,11 @@ class _AddTodoState extends State<AddTodo> {
                                   );
                                 });
                           },
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              color: state.color,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          child: Icon(
+                            Icons.palette_outlined,
+                            color: state.color,
                           ),
                         )
-                        // IconButton(
-                        //     onPressed: () {},
-                        //     icon: const Icon(
-                        //       Icons.edit,
-                        //     )),
                       ]),
 
                   //coding the [input] fields

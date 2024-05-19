@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:todo/db/sql_helper.dart';
 import 'package:todo/dependency_injection.dart';
 import 'package:todo/features/account/view/ui/register_screen.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
@@ -17,6 +20,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDependency();
+
+  await openDatabase(
+    join(await getDatabasesPath(), '${DatabaseHelper.instance.database}'),
+  );
+
   runApp(const MyApp());
 }
 

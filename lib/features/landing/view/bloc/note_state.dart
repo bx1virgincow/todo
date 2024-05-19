@@ -130,7 +130,7 @@ class DeleteFailedState extends NoteState {
 }
 
 class SearchNoteState extends NoteState {
-  SearchNoteState({
+  const SearchNoteState({
     super.errorMessage = '',
     required super.noteList,
     super.todo,

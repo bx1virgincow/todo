@@ -94,33 +94,50 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   FutureOr<void> _onDeleteNoteEvent(
       OnDeleteNoteEvent event, Emitter<NoteState> emit) async {
     try {
-      log('loading..please wait');
+      log('Deleting note...please wait');
       final response = await _todoRepo.deleteNote(event.noteId);
       if (response is Success) {
-        emit(const DeleteSuccessState());
+        emit(const NoteDeletedState());
+        // Fetch the updated note list after deletion
+        final updatedNoteList = _todoRepo.getNotes();
+
+        await for (var note in updatedNoteList) {
+          List<NoteModel> todoModel = List.from(note.value);
+          emit(NoteLoadedState(noteList: todoModel));
+        }
       } else if (response is Failed) {
-        emit(const DeleteFailedState(errorMessage: 'Failed to delete'));
+        emit(const NoteFailedState(errorMessage: 'Failed to delete'));
       }
     } catch (e) {
-      log('Deletion failed');
-      emit(const DeleteFailedState(errorMessage: 'Failed to delete'));
+      log('Deletion failed: $e');
+      emit(const NoteFailedState(errorMessage: 'Failed to delete'));
     }
   }
 
   FutureOr<void> _searchNoteEvent(
       SearchNoteEvent event, Emitter<NoteState> emit) {
-    try{
-      List<NoteModel> noteList = state.noteList.where((searchValue) {
-        return searchValue.title
-            .toLowerCase()
-            .contains(event.searchValue.toLowerCase());
-      }).toList();
+    try {
+      if (state is NoteLoadedState) {
+        print('I am here searching');
+        final List<NoteModel> filteredNotes = (state as NoteLoadedState).noteList.where((note) {
+          return note.title.toLowerCase().contains(event.searchValue.toLowerCase());
+        }).toList();
 
-      log('value: ${event.searchValue}');
-      emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
-    }catch(e){
-      log('Error while searching: $e');
+        emit(SearchNoteState(searchValue: event.searchValue, noteList: filteredNotes));
+      }
+    } catch (e) {
+      emit(const NoteFailedState(errorMessage: 'Error while searching'));
     }
-
   }
 }
+
+// state.noteList.where((searchValue) {
+//   return searchValue.title
+//       .toLowerCase()
+//       .contains(event.searchValue.toLowerCase());
+// }).toList();
+
+// log('value: ${event.searchValue}');
+// emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
+// } catch (e) {
+//   log('Error while searching: $e');

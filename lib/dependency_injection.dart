@@ -18,5 +18,5 @@ Future<void> initializeDependency() async {
 
   getIt.registerFactory<OnBoardBloc>(() => OnBoardBloc());
 
-  GetIt.I.registerSingleton<NoteRepo>(LocalNoteRepoImpl());
+  getIt.registerLazySingleton<NoteRepo>(() => LocalNoteRepoImpl());
 }

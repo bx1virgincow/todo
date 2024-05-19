@@ -42,7 +42,7 @@ class NoteTile extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: onDelete,
-                  child: const Icon(Icons.edit),
+                  child: const Icon(Icons.delete),
                 ),
               ],
             ),

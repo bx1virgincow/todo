@@ -26,6 +26,13 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<NoteBloc, NoteState>(
       builder: (context, state) {

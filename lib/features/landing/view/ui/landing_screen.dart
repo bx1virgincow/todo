@@ -16,11 +16,12 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen>
     with SingleTickerProviderStateMixin {
-  //initilization of bloc
+  //initialization of bloc
   final NoteBloc _noteBloc = NoteBloc(LocalNoteRepoImpl());
 
   //tab bar controller
   late TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -31,8 +32,10 @@ class _LandingScreenState extends State<LandingScreen>
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+
   }
 
   @override
@@ -82,36 +85,30 @@ class _LandingScreenState extends State<LandingScreen>
                 ),
                 const SizedBox(height: 10),
                 //search field
-                BlocBuilder<NoteBloc, NoteState>(
-                  builder: (context, state) {
-                    return TextFormField(
-                      onChanged: (value) {
-                        context
-                            .read<NoteBloc>()
-                            .add(SearchNoteEvent(searchValue: value));
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        fillColor: AppColor.textFieldBgColor,
-                        filled: true,
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: AppColor.textFieldTextColor,
-                        ),
-                        hintText: 'Search by keyword',
-                        hintStyle:
-                            const TextStyle(color: AppColor.textFieldTextColor),
-                        suffixIcon: const Icon(
-                          Icons.filter_list,
-                          color: AppColor.textFieldTextColor,
-                        ),
-                      ),
-                    );
-
+                TextFormField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                   _noteBloc.add(SearchNoteEvent(searchValue: value));
                   },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    fillColor: AppColor.textFieldBgColor,
+                    filled: true,
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: AppColor.textFieldTextColor,
+                    ),
+                    hintText: 'Search by keyword',
+                    hintStyle:
+                        const TextStyle(color: AppColor.textFieldTextColor),
+                    suffixIcon: const Icon(
+                      Icons.filter_list,
+                      color: AppColor.textFieldTextColor,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 10),
 
@@ -145,9 +142,25 @@ class _LandingScreenState extends State<LandingScreen>
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children: const [
-                      NoteWidget(),
-                      Center(
+                    children:  [
+                      BlocBuilder<NoteBloc, NoteState>(
+                        bloc: _noteBloc,
+                        builder: (context, state) {
+                          if (state is NoteInitial) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (state is NoteLoadedState || state is SearchNoteState) {
+                            final noteList = state is NoteLoadedState
+                                ? state.noteList
+                                : (state as SearchNoteState).noteList;
+                            return NoteWidget(noteList: noteList);
+                          } else if (state is NoteFailedState) {
+                            return const Center(child: Text('Failed to fetch data'));
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                      const Center(
                         child: Text('Coming soon...'),
                       )
                     ],
