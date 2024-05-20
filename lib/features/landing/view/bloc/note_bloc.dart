@@ -79,9 +79,14 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       OnUpdateNoteEvent event, Emitter<NoteState> emit) async {
     try {
       final response = _todoRepo.updateNote(
-          event.id, event.title, event.description, event.color);
+        event.id,
+        event.title,
+        event.description,
+        event.color,
+      );
       if (response is Success) {
-        log('success update');
+        log('updated successfully: $response');
+        emit(const UpdateNoteState());
       } else if (response is Failed) {
         log('failed updating');
       }
@@ -102,15 +107,15 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         final updatedNoteList = _todoRepo.getNotes();
 
         await for (var note in updatedNoteList) {
-          List<NoteModel> todoModel = List.from(note.value);
-          emit(NoteLoadedState(noteList: todoModel));
+          List<NoteModel> noteList = List.from(note.value);
+          emit(NoteLoadedState(noteList: noteList));
         }
       } else if (response is Failed) {
         emit(const NoteFailedState(errorMessage: 'Failed to delete'));
       }
     } catch (e) {
       log('Deletion failed: $e');
-      emit(const NoteFailedState(errorMessage: 'Failed to delete'));
+      emit(const NoteFailedState(errorMessage: 'Please try again!'));
     }
   }
 
@@ -118,12 +123,15 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       SearchNoteEvent event, Emitter<NoteState> emit) {
     try {
       if (state is NoteLoadedState) {
-        print('I am here searching');
-        final List<NoteModel> filteredNotes = (state as NoteLoadedState).noteList.where((note) {
-          return note.title.toLowerCase().contains(event.searchValue.toLowerCase());
+        final List<NoteModel> filteredNotes =
+            (state as NoteLoadedState).noteList.where((note) {
+          return note.title
+              .toLowerCase()
+              .contains(event.searchValue.toLowerCase());
         }).toList();
 
-        emit(SearchNoteState(searchValue: event.searchValue, noteList: filteredNotes));
+        emit(SearchNoteState(
+            searchValue: event.searchValue, noteList: filteredNotes));
       }
     } catch (e) {
       emit(const NoteFailedState(errorMessage: 'Error while searching'));

@@ -37,7 +37,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SplashBloc()..add(OnSplashEvent()),
+          create: (context) => SplashBloc()
+            ..add(
+              OnSplashEvent(),
+            ),
           child: const SplashScreen(),
         ),
         BlocProvider(
@@ -49,7 +52,9 @@ class MyApp extends StatelessWidget {
           child: const LandingScreen(),
         ),
         BlocProvider(
-          create: (context) => AccountBloc(LocalUserRepoImpl()),
+          create: (context) => AccountBloc(
+            LocalUserRepoImpl(),
+          ),
           child: const RegisterScreen(),
         ),
       ],

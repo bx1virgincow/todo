@@ -35,14 +35,12 @@ final class OnUpdateNoteEvent extends NoteEvent {
   final String title;
   final String description;
   final Color color;
-  final String category;
 
   OnUpdateNoteEvent({
     required this.id,
     required this.title,
     required this.description,
     required this.color,
-    required this.category,
   });
 }
 

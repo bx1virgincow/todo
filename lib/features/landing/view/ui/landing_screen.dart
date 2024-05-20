@@ -35,7 +35,6 @@ class _LandingScreenState extends State<LandingScreen>
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
-
   }
 
   @override
@@ -88,7 +87,7 @@ class _LandingScreenState extends State<LandingScreen>
                 TextFormField(
                   controller: _searchController,
                   onChanged: (value) {
-                   _noteBloc.add(SearchNoteEvent(searchValue: value));
+                    _noteBloc.add(SearchNoteEvent(searchValue: value));
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -142,24 +141,31 @@ class _LandingScreenState extends State<LandingScreen>
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children:  [
+                    children: [
                       BlocBuilder<NoteBloc, NoteState>(
                         bloc: _noteBloc,
                         builder: (context, state) {
                           if (state is NoteInitial) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (state is NoteLoadedState || state is SearchNoteState) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (state is NoteLoadedState ||
+                              state is SearchNoteState) {
                             final noteList = state is NoteLoadedState
                                 ? state.noteList
                                 : (state as SearchNoteState).noteList;
-                            return NoteWidget(noteList: noteList);
+                            return NoteWidget(
+                              noteList: noteList,
+                              noteBloc: _noteBloc,
+                            );
                           } else if (state is NoteFailedState) {
-                            return const Center(child: Text('Failed to fetch data'));
+                            return const Center(
+                                child: Text('Failed to fetch data'));
                           } else {
                             return const SizedBox();
                           }
                         },
                       ),
+                      //other tab
                       const Center(
                         child: Text('Coming soon...'),
                       )

@@ -139,3 +139,14 @@ class SearchNoteState extends NoteState {
     required super.searchValue,
   });
 }
+
+class UpdateNoteState extends NoteState {
+  const UpdateNoteState({
+    super.errorMessage="",
+    super.noteList=const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown="",
+    super.searchValue="",
+  });
+}

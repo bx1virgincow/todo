@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo/common/widget/text_fields.dart';
 import 'package:todo/features/landing/domain/model/todo_model.dart';
+import 'package:todo/features/landing/view/ui/landing_screen.dart';
 
 import '../bloc/note_bloc.dart';
 
@@ -17,12 +19,13 @@ class _EditScreenState extends State<EditScreen> {
   //controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-
+  late Color _color;
   @override
   void initState() {
-    super.initState();
     _titleController.text = widget.todoModel.title;
     _descriptionController.text = widget.todoModel.description;
+    _color = widget.todoModel.color;
+    super.initState();
   }
 
   @override
@@ -34,8 +37,6 @@ class _EditScreenState extends State<EditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NoteBloc, NoteState>(
-      builder: (context, state) {
         return Scaffold(
           body: SafeArea(
             child: Padding(
@@ -45,10 +46,79 @@ class _EditScreenState extends State<EditScreen> {
                   children: [
                     //back arrow
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: const Icon(Icons.chevron_left),
+                          child: const Icon(
+                            Icons.chevron_left,
+                          ),
+                        ),
+
+                        //color palette
+                        Row(
+                          children: [
+                            //save icon
+                            GestureDetector(
+                              onTap: () {
+                                BlocProvider.of<NoteBloc>(context).add(
+                                  OnUpdateNoteEvent(
+                                    id: widget.todoModel.id,
+                                    title: _titleController.text,
+                                    description: _descriptionController.text,
+                                    color: _color,
+                                  ),
+                                );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Note Updated Successfully!'),
+                                  ),
+                                );
+
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LandingScreen(),
+                                  ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.update_outlined,
+                                color: _color,
+                              ),
+                            ),
+                            //space
+                            const SizedBox(width: 10),
+                            //color palette
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        content: SingleChildScrollView(
+                                          child: ColorPicker(
+                                            pickerColor: _color,
+                                            onColorChanged: (value) {
+                                              _color = value;
+                                              BlocProvider.of<NoteBloc>(context)
+                                                  .add(
+                                                OnColorChangedEvent(value),
+                                              );
+                                            },
+                                            pickerAreaHeightPercent: 0.8,
+                                          ),
+                                        ),
+                                      );
+                                    });
+                              },
+                              child: Icon(
+                                Icons.palette_outlined,
+                                color: _color,
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     ),
@@ -74,35 +144,11 @@ class _EditScreenState extends State<EditScreen> {
                       hintText: 'Description',
                       keyboardType: TextInputType.multiline,
                     ),
-
-                    //space
-                    const SizedBox(height: 10),
-
-                    //button
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.read<NoteBloc>().add(
-                                OnUpdateNoteEvent(
-                                  id: widget.todoModel.id,
-                                  title: _titleController.text,
-                                  description: _descriptionController.text,
-                                  color: widget.todoModel.color,
-                                  category: state.dropdown,
-                                ),
-                              );
-                        },
-                        child: const Text('Update Note'),
-                      ),
-                    )
                   ],
                 ),
               ),
             ),
           ),
         );
-      },
-    );
   }
 }

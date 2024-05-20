@@ -85,8 +85,12 @@ class LocalNoteRepoImpl extends NoteRepo {
         'color': color.value,
       };
 
+      log('values: $values');
+
       var response = await db?.update(DatabaseHelper.noteTable, values,
           where: 'id=?', whereArgs: [id]);
+
+      log('response: $response');
 
       return Success(value: response);
     } catch (e) {
