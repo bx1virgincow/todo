@@ -12,6 +12,7 @@ part 'note_state.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   final NoteRepo _todoRepo;
+  List<NoteModel> _fullNoteList = [];
 
   NoteBloc(this._todoRepo) : super(const NoteInitial()) {
     on<OnNoteLoadEvent>(_onNoteLoadEvent);
@@ -33,6 +34,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
           log('TodoResponse: $response');
 
           List<NoteModel> todoModel = List.from(response.value);
+          _fullNoteList = todoModel;
           emit(NoteLoadedState(noteList: todoModel));
         } else if (response is Failed) {
           log('response: $response');
@@ -122,30 +124,17 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   FutureOr<void> _searchNoteEvent(
       SearchNoteEvent event, Emitter<NoteState> emit) {
     try {
-      if (state is NoteLoadedState) {
-        final List<NoteModel> filteredNotes =
-            (state as NoteLoadedState).noteList.where((note) {
-          return note.title
-              .toLowerCase()
-              .contains(event.searchValue.toLowerCase());
-        }).toList();
+      List<NoteModel> noteList = [];
+      noteList = _fullNoteList.where((note) {
+        return note.title
+            .toLowerCase()
+            .contains(event.searchValue.toLowerCase());
+      }).toList();
 
-        emit(SearchNoteState(
-            searchValue: event.searchValue, noteList: filteredNotes));
-      }
+      log('value: ${event.searchValue}');
+      emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
     } catch (e) {
-      emit(const NoteFailedState(errorMessage: 'Error while searching'));
+      log('Error while searching: $e');
     }
   }
 }
-
-// state.noteList.where((searchValue) {
-//   return searchValue.title
-//       .toLowerCase()
-//       .contains(event.searchValue.toLowerCase());
-// }).toList();
-
-// log('value: ${event.searchValue}');
-// emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
-// } catch (e) {
-//   log('Error while searching: $e');

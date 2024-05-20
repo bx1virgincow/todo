@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
+import 'package:todo/features/landing/domain/model/todo_model.dart';
 import 'package:todo/features/landing/view/widget/note_container.dart';
 
 import '../../../../common/color.dart';
@@ -28,6 +29,17 @@ class _LandingScreenState extends State<LandingScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _noteBloc.add(OnNoteLoadEvent(noteList: const []));
+  }
+
+  //on search changed
+  void _onSearchChanged(String query){
+    _noteBloc.add(SearchNoteEvent(searchValue: query));
+  }
+
+  //clear search
+  void _clearSearch(){
+    _searchController.clear();
+    _noteBloc.add(SearchNoteEvent(searchValue: ''));
   }
 
   @override
@@ -58,8 +70,10 @@ class _LandingScreenState extends State<LandingScreen>
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(),
-                        SizedBox(width: 5),
+                        CircleAvatar(
+                          child: Text('HB'),
+                        ),
+                        SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -79,16 +93,16 @@ class _LandingScreenState extends State<LandingScreen>
                     ),
                     //notification
 
-                    CircleAvatar()
+                    CircleAvatar(
+                      child: Icon(Icons.notifications_outlined),
+                    )
                   ],
                 ),
                 const SizedBox(height: 10),
                 //search field
                 TextFormField(
                   controller: _searchController,
-                  onChanged: (value) {
-                    _noteBloc.add(SearchNoteEvent(searchValue: value));
-                  },
+                  onChanged: _onSearchChanged,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
@@ -103,10 +117,13 @@ class _LandingScreenState extends State<LandingScreen>
                     hintText: 'Search by keyword',
                     hintStyle:
                         const TextStyle(color: AppColor.textFieldTextColor),
-                    suffixIcon: const Icon(
-                      Icons.filter_list,
-                      color: AppColor.textFieldTextColor,
+                    suffix: InkWell(onTap: _clearSearch,
+                      child: const Icon(Icons.close_outlined),
                     ),
+                    // suffixIcon: const Icon(
+                    //   Icons.filter_list,
+                    //   color: AppColor.textFieldTextColor,
+                    // ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -148,13 +165,26 @@ class _LandingScreenState extends State<LandingScreen>
                           if (state is NoteInitial) {
                             return const Center(
                                 child: CircularProgressIndicator());
-                          } else if (state is NoteLoadedState ||
-                              state is SearchNoteState) {
-                            final noteList = state is NoteLoadedState
-                                ? state.noteList
-                                : (state as SearchNoteState).noteList;
+                          }
+                          // else if (state is NoteLoadedState || state is SearchNoteState) {
+                          //   final notes = state is NoteLoadedState ? state.noteList : (state as SearchNoteState).noteList;
+                          //   return ListView.builder(
+                          //     itemCount: notes.length,
+                          //     itemBuilder: (context, index) {
+                          //       return ListTile(
+                          //         title: Text(notes[index].title),
+                          //         subtitle: Text(notes[index].description),
+                          //       );
+                          //     },
+                          //   );
+                          else if (state is NoteLoadedState) {
                             return NoteWidget(
-                              noteList: noteList,
+                              noteList: state.noteList,
+                              noteBloc: _noteBloc,
+                            );
+                          } else if (state is SearchNoteState) {
+                            return RestaurantListView(
+                              listData: state.noteList,
                               noteBloc: _noteBloc,
                             );
                           } else if (state is NoteFailedState) {
@@ -176,5 +206,35 @@ class _LandingScreenState extends State<LandingScreen>
             ),
           ),
         ));
+  }
+}
+
+class RestaurantListView extends StatelessWidget {
+  const RestaurantListView(
+      {super.key, required this.listData, required this.noteBloc});
+
+  final List<NoteModel> listData;
+  final NoteBloc noteBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: listData.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(listData[index].title),
+          subtitle: Text(listData[index].description),
+          leading: const SizedBox(
+            width: 50,
+            child: Row(
+              children: [
+                Icon(Icons.star),
+              ],
+            ),
+          ),
+          trailing: Text("Km"),
+        );
+      },
+    );
   }
 }
