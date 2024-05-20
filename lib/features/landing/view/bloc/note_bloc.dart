@@ -124,15 +124,21 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   FutureOr<void> _searchNoteEvent(
       SearchNoteEvent event, Emitter<NoteState> emit) {
     try {
-      List<NoteModel> noteList = [];
-      noteList = _fullNoteList.where((note) {
-        return note.title
-            .toLowerCase()
-            .contains(event.searchValue.toLowerCase());
-      }).toList();
+      if (event.searchValue.isEmpty) {
+        log('fullNoteList: $_fullNoteList');
+        emit(NoteLoadedState(noteList: _fullNoteList));
+      } else {
+        List<NoteModel> noteList = [];
+        noteList = _fullNoteList.where((note) {
+          return note.title
+              .toLowerCase()
+              .contains(event.searchValue.toLowerCase());
+        }).toList();
 
+        emit(SearchNoteState(
+            searchValue: event.searchValue, noteList: noteList));
+      }
       log('value: ${event.searchValue}');
-      emit(SearchNoteState(searchValue: event.searchValue, noteList: noteList));
     } catch (e) {
       log('Error while searching: $e');
     }
