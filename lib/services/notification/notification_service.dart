@@ -31,7 +31,7 @@ class LocalNotifications {
   }
 
   static Future showNotification({
-    var id =0,
+    var id = 0,
     required String title,
     required String body,
     var payload,

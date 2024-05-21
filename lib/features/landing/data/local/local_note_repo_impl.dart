@@ -48,7 +48,6 @@ class LocalNoteRepoImpl extends NoteRepo {
 
   @override
   Stream<Result> getNote(int id) {
-    // TODO: implement getTodo
     throw UnimplementedError();
   }
 

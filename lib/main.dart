@@ -22,6 +22,8 @@ Future<void> main() async {
 
   await initializeDependency();
 
+  LocalNotifications.initialize();
+
   await openDatabase(
     join(await getDatabasesPath(), '${DatabaseHelper.instance.database}'),
   );
@@ -29,20 +31,8 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  //notification on initState
-  @override
-  void initState() {
-    super.initState();
-    LocalNotifications.initialize();
-  }
 
   @override
   Widget build(BuildContext context) {

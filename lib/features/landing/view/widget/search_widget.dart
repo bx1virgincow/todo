@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:todo/common/color.dart';
 import 'package:todo/features/landing/view/ui/edit_screen.dart';
 import 'package:todo/features/landing/view/widget/todo_tile.dart';
 
