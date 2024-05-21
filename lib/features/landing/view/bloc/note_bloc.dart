@@ -131,8 +131,11 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         List<NoteModel> noteList = [];
         noteList = _fullNoteList.where((note) {
           return note.title
-              .toLowerCase()
-              .contains(event.searchValue.toLowerCase());
+                  .toLowerCase()
+                  .contains(event.searchValue.toLowerCase()) ||
+              note.description.toLowerCase().contains(
+                    event.searchValue.toLowerCase(),
+                  );
         }).toList();
 
         emit(SearchNoteState(

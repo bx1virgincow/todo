@@ -11,6 +11,7 @@ import 'package:todo/features/onboarding/view/bloc/on_board_bloc.dart';
 import 'package:todo/features/onboarding/view/ui/on_board_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 import 'package:todo/features/splash/view/ui/splash_screen.dart';
+import 'package:todo/services/notification/notification_service.dart';
 
 import 'features/account/data/sources/local/local_repo_impl.dart';
 import 'features/account/view/bloc/account_bloc.dart';
@@ -28,10 +29,21 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  //notification on initState
+  @override
+  void initState() {
+    super.initState();
+    LocalNotifications.initialize();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

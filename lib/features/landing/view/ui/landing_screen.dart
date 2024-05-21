@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
-import 'package:todo/features/landing/domain/model/todo_model.dart';
 import 'package:todo/features/landing/view/widget/note_container.dart';
+import 'package:todo/features/landing/view/widget/search_widget.dart';
+import 'package:todo/services/notification/notification_service.dart';
 
 import '../../../../common/color.dart';
 import '../bloc/note_bloc.dart';
@@ -32,12 +33,12 @@ class _LandingScreenState extends State<LandingScreen>
   }
 
   //on search changed
-  void _onSearchChanged(String query){
+  void _onSearchChanged(String query) {
     _noteBloc.add(SearchNoteEvent(searchValue: query));
   }
 
   //clear search
-  void _clearSearch(){
+  void _clearSearch() {
     _searchController.clear();
     _noteBloc.add(SearchNoteEvent(searchValue: ''));
   }
@@ -65,10 +66,10 @@ class _LandingScreenState extends State<LandingScreen>
             child: Column(
               children: [
                 //user information and notification row
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         CircleAvatar(
                           child: Text('HB'),
@@ -94,7 +95,16 @@ class _LandingScreenState extends State<LandingScreen>
                     //notification
 
                     CircleAvatar(
-                      child: Icon(Icons.notifications_outlined),
+                      child: InkWell(
+                          onTap: () {
+                            LocalNotifications.showNotification(
+                              title: "Hello World",
+                              body: "Trial Notification",
+                              flp: LocalNotifications
+                                  .flutterLocalNotificationPlugin,
+                            );
+                          },
+                          child: const Icon(Icons.notifications_outlined)),
                     )
                   ],
                 ),
@@ -103,6 +113,7 @@ class _LandingScreenState extends State<LandingScreen>
                 TextFormField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
+                  onTapOutside: (e) => FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
@@ -117,13 +128,13 @@ class _LandingScreenState extends State<LandingScreen>
                     hintText: 'Search by keyword',
                     hintStyle:
                         const TextStyle(color: AppColor.textFieldTextColor),
-                    suffix: InkWell(onTap: _clearSearch,
-                      child: const Icon(Icons.close_outlined),
+                    suffixIcon: InkWell(
+                      onTap: _clearSearch,
+                      child: const Icon(
+                        Icons.close_outlined,
+                        color: AppColor.textFieldTextColor,
+                      ),
                     ),
-                    // suffixIcon: const Icon(
-                    //   Icons.filter_list,
-                    //   color: AppColor.textFieldTextColor,
-                    // ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -165,26 +176,14 @@ class _LandingScreenState extends State<LandingScreen>
                           if (state is NoteInitial) {
                             return const Center(
                                 child: CircularProgressIndicator());
-                          }
-                          // else if (state is NoteLoadedState || state is SearchNoteState) {
-                          //   final notes = state is NoteLoadedState ? state.noteList : (state as SearchNoteState).noteList;
-                          //   return ListView.builder(
-                          //     itemCount: notes.length,
-                          //     itemBuilder: (context, index) {
-                          //       return ListTile(
-                          //         title: Text(notes[index].title),
-                          //         subtitle: Text(notes[index].description),
-                          //       );
-                          //     },
-                          //   );
-                          else if (state is NoteLoadedState) {
+                          } else if (state is NoteLoadedState) {
                             return NoteWidget(
                               noteList: state.noteList,
                               noteBloc: _noteBloc,
                             );
                           } else if (state is SearchNoteState) {
-                            return RestaurantListView(
-                              listData: state.noteList,
+                            return SearchWidget(
+                              noteList: state.noteList,
                               noteBloc: _noteBloc,
                             );
                           } else if (state is NoteFailedState) {
@@ -206,35 +205,5 @@ class _LandingScreenState extends State<LandingScreen>
             ),
           ),
         ));
-  }
-}
-
-class RestaurantListView extends StatelessWidget {
-  const RestaurantListView(
-      {super.key, required this.listData, required this.noteBloc});
-
-  final List<NoteModel> listData;
-  final NoteBloc noteBloc;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: listData.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(listData[index].title),
-          subtitle: Text(listData[index].description),
-          leading: const SizedBox(
-            width: 50,
-            child: Row(
-              children: [
-                Icon(Icons.star),
-              ],
-            ),
-          ),
-          trailing: Text("Km"),
-        );
-      },
-    );
   }
 }
