@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/features/landing/data/local/local_note_repo_impl.dart';
 import 'package:todo/features/landing/view/widget/note_container.dart';
 import 'package:todo/features/landing/view/widget/search_widget.dart';
-import 'package:todo/services/notification/notification_service.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:todo/services/notification_service.dart';
 
 import '../../../../common/color.dart';
 import '../bloc/note_bloc.dart';
@@ -24,6 +25,7 @@ class _LandingScreenState extends State<LandingScreen>
   //tab bar controller
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
+  int _badgeText = 0;
 
   @override
   void initState() {
@@ -95,17 +97,16 @@ class _LandingScreenState extends State<LandingScreen>
                     //notification
 
                     CircleAvatar(
-                      child: InkWell(
-                          onTap: () {
-                            LocalNotifications.showNotification(
-                              title: "Hello World",
-                              body: "Trial Notification",
-                              flp: LocalNotifications
-                                  .flutterLocalNotificationPlugin,
-                            );
-                          },
-                          child: const Icon(Icons.notifications_outlined)),
-                    )
+                      child: badges.Badge(
+                        onTap: () async {
+                          print('clicked');
+                          LocalNotifications.showNotification (
+                              title: "Test", body: "Schedule Body");
+                        },
+                        badgeContent: Text('${_badgeText.toString()}'),
+                        child: const Icon(Icons.notifications_outlined),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),

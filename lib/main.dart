@@ -11,7 +11,7 @@ import 'package:todo/features/onboarding/view/bloc/on_board_bloc.dart';
 import 'package:todo/features/onboarding/view/ui/on_board_screen.dart';
 import 'package:todo/features/splash/view/bloc/splash_bloc.dart';
 import 'package:todo/features/splash/view/ui/splash_screen.dart';
-import 'package:todo/services/notification/notification_service.dart';
+import 'package:todo/services/notification_service.dart';
 
 import 'features/account/data/sources/local/local_repo_impl.dart';
 import 'features/account/view/bloc/account_bloc.dart';
@@ -19,15 +19,13 @@ import 'features/landing/view/bloc/note_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await initializeDependency();
-
+  // BackgroundTasks.initialize();
   LocalNotifications.initialize();
 
   await openDatabase(
     join(await getDatabasesPath(), '${DatabaseHelper.instance.database}'),
   );
-
   runApp(const MyApp());
 }
 
