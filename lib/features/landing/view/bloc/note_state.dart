@@ -8,6 +8,7 @@ sealed class NoteState {
   final Color color;
   final String dropdown;
   final String searchValue;
+  final bool isSearchClicked;
 
   const NoteState({
     required this.errorMessage,
@@ -16,6 +17,7 @@ sealed class NoteState {
     required this.color,
     required this.dropdown,
     required this.searchValue,
+    required this.isSearchClicked,
   });
 }
 
@@ -27,6 +29,7 @@ class NoteInitial extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -38,6 +41,7 @@ class NoteLoadedState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -49,6 +53,7 @@ class NoteAddedState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -60,6 +65,7 @@ class NoteFailedState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -71,6 +77,7 @@ class TodoSuccessState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -82,6 +89,7 @@ class ColorPickerState extends NoteState {
     required super.color,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -93,6 +101,7 @@ class DropdownState extends NoteState {
     super.color = Colors.blue,
     required super.dropdown,
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -104,6 +113,7 @@ class NoteDeletedState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -115,6 +125,7 @@ class DeleteSuccessState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -126,6 +137,7 @@ class DeleteFailedState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     super.searchValue = '',
+    super.isSearchClicked = false,
   });
 }
 
@@ -137,6 +149,7 @@ class SearchNoteState extends NoteState {
     super.color = Colors.blue,
     super.dropdown = '',
     required super.searchValue,
+    super.isSearchClicked = false,
   });
 }
 
@@ -148,5 +161,19 @@ class UpdateNoteState extends NoteState {
     super.color = Colors.blue,
     super.dropdown="",
     super.searchValue="",
+    super.isSearchClicked = false,
   });
 }
+
+class OnOPenSearchBarState extends NoteState {
+  const OnOPenSearchBarState({
+    super.errorMessage="",
+    super.noteList=const [],
+    super.todo,
+    super.color = Colors.blue,
+    super.dropdown="",
+    super.searchValue="",
+    required super.isSearchClicked,
+  });
+}
+

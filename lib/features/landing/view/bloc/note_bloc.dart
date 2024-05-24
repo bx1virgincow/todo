@@ -22,6 +22,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     on<OnUpdateNoteEvent>(_onUpdateNoteEvent);
     on<OnDeleteNoteEvent>(_onDeleteNoteEvent);
     on<SearchNoteEvent>(_searchNoteEvent);
+    on<OnOpenSearchBarEvent>(_onOpenSearchBarEvent);
   }
 
   FutureOr<void> _onNoteLoadEvent(
@@ -146,4 +147,14 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       log('Error while searching: $e');
     }
   }
+
+  //open search bar
+  FutureOr<void> _onOpenSearchBarEvent(
+      OnOpenSearchBarEvent event, Emitter<NoteState> emit) {
+        try{
+          emit(OnOPenSearchBarState(isSearchClicked: !event.isSearchClicked));
+        }catch(e){
+          log('failed');
+        }
+      }
 }

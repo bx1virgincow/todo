@@ -45,8 +45,17 @@ class _AddTodoState extends State<AddTodo> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            icon: const Icon(
-                              Icons.chevron_left,
+                            icon: Container(
+                              width: 40,
+                              height: 40,
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: AppColor.backgroundColor,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: const Icon(
+                                Icons.chevron_left,
+                                color: AppColor.whiteColor,
+                              ),
                             )),
                         //row for color
                         Row(
@@ -57,7 +66,18 @@ class _AddTodoState extends State<AddTodo> {
                                 _titleController.clear();
                                 _descriptionController.clear();
                               },
-                              child: Icon(Icons.delete_outline, color: state.color,),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: AppColor.backgroundColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: AppColor.whiteColor,
+                                ),
+                              ),
                             ),
                             //space
                             const SizedBox(width: 10),
@@ -73,7 +93,17 @@ class _AddTodoState extends State<AddTodo> {
                                   ),
                                 );
                               },
-                              child: Icon(Icons.save_outlined, color: state.color,),
+                              child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.backgroundColor,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Icon(
+                                    Icons.save_outlined,
+                                    color: AppColor.whiteColor,
+                                  )),
                             ),
                             //space
                             const SizedBox(width: 10),
@@ -103,16 +133,24 @@ class _AddTodoState extends State<AddTodo> {
                                       );
                                     });
                               },
-                              child: Icon(
-                                Icons.palette_outlined,
-                                color: state.color,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: AppColor.backgroundColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(
+                                  Icons.palette_outlined,
+                                  color: AppColor.whiteColor,
+                                ),
                               ),
                             ),
                           ],
                         )
                       ]),
 
-                  //textfields
+                  //textFields
                   TextFields(
                     controller: _titleController,
                     hintText: 'Title',
@@ -149,11 +187,9 @@ class _AddTodoState extends State<AddTodo> {
             ),
           );
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LandingScreen(),
-            ),
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LandingScreen()),
+            (Route<dynamic> route) => false,
           );
         }
       },

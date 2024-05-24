@@ -11,6 +11,12 @@ final class OnNoteLoadEvent extends NoteEvent {
   });
 }
 
+final class OnOpenSearchBarEvent extends NoteEvent{
+  final bool isSearchClicked;
+  OnOpenSearchBarEvent({required this.isSearchClicked});
+
+}
+
 final class OnDeleteNoteEvent extends NoteEvent {
   final int noteId;
   OnDeleteNoteEvent(this.noteId);

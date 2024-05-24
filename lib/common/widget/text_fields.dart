@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/common/font.dart';
 
 class TextFields extends StatefulWidget {
   final TextEditingController controller;
@@ -31,11 +32,18 @@ class _TextFieldsState extends State<TextFields> {
       minLines: widget.minLine,
       keyboardType: widget.keyboardType,
       controller: widget.controller,
+      style: TextStyle(
+        fontSize: AppFont.largerFontSize,
+      ),
       validator: (value) => widget.validator!(value),
       decoration: InputDecoration(
           hintText: widget.hintText,
+          hintStyle: TextStyle(
+            fontSize: AppFont.largerFontSize
+          ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+            // borderRadius: BorderRadius.circular(10)
           )),
     );
   }

@@ -19,7 +19,7 @@ class SearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return noteList.isEmpty ? const Center(
-      child: Text('No Item Found')
+      child: Text('Note not found')
     ) : StaggeredGridView.countBuilder(
       crossAxisCount: 4,
       itemCount: noteList.length,

@@ -48,7 +48,7 @@ class NoteWidget extends StatelessWidget {
             );
           }),
       staggeredTileBuilder: (int index) =>
-          StaggeredTile.count(2, index.isEven ? 2 : 1),
+          StaggeredTile.count(2, index.isEven ? 2 : 2),
       mainAxisSpacing: 4.0,
       crossAxisSpacing: 4.0,
     );

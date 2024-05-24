@@ -81,10 +81,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 ),
                         ),
                         //skip
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('Skip'),
-                        ),
+                        // TextButton(
+                        //   onPressed: () {},
+                        //   child: const Text('Skip'),
+                        // ),
                       ],
                     ),
                   ),
